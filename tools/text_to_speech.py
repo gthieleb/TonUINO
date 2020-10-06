@@ -58,10 +58,18 @@ def textToSpeechUsingArgs(text, targetFile, args):
 def textToSpeech(text, targetFile, lang='de', useAmazon=False, useGoogleKey=None):
     print(('\nGenerating: ' + targetFile + ' - ' + text))
     if useAmazon:
-        response = subprocess.check_output(['aws', 'polly', 'synthesize-speech', '--output-format', 'mp3',
-            '--voice-id', amazonVoiceByLang[lang], '--text-type', 'ssml',
-            '--text', '<speak><amazon:effect name="drc"><prosody rate=\"+10%\">' + text + '</prosody></amazon:effect></speak>',
-            targetFile])
+        import boto3
+
+        client = boto3.client('polly')
+        voice_id = amazonVoiceByLang[lang]
+        response = client.synthesize_speech(VoiceId=voice_id,
+                        OutputFormat='mp3', 
+                        Text = text)
+
+        with open(targetFile, 'wb') as f:
+            f.write(response['AudioStream'].read())
+            f.close()
+
     elif useGoogleKey:
         responseJson = postJson(
             'https://texttospeech.googleapis.com/v1beta1/text:synthesize?key=' + useGoogleKey,
