@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 # Adds a lead-in message to each mp3 file of a directory storing the result in another directory.
 # So - when played e.g. on a TonUINO - you first will hear the title of the track, then the track itself.
@@ -33,7 +33,7 @@ mp3FileIndex = 0
 
 
 def fail(msg):
-    print('ERROR: ' + msg)
+    print(('ERROR: ' + msg))
     sys.exit(1)
 
 
@@ -61,7 +61,7 @@ def addLeadInMessage(inputPath, outputPath):
     inputFileExt = inputFileNameSplit[1].lower()
 
     if inputFileExt != '.mp3':
-        print('Ignoring {} (no mp3 file)'.format(os.path.abspath(inputPath)))
+        print(('Ignoring {} (no mp3 file)'.format(os.path.abspath(inputPath))))
         return
 
     if args.add_numbering:
@@ -70,11 +70,11 @@ def addLeadInMessage(inputPath, outputPath):
         mp3FileIndex += 1
 
     if os.path.isfile(outputPath):
-        print('Skipping {} (file already exists)'.format(os.path.abspath(outputPath)))
+        print(('Skipping {} (file already exists)'.format(os.path.abspath(outputPath))))
         return
 
     text = re.sub(fileRegex, titlePattern, inputFileName).replace('_', ' ').strip()
-    print('Adding lead-in "{}" to {}'.format(text, os.path.abspath(outputPath)))
+    print(('Adding lead-in "{}" to {}'.format(text, os.path.abspath(outputPath))))
 
     if not args.dry_run:
         tempLeadInFile = 'temp-lead-in.mp3'
@@ -89,7 +89,7 @@ def addLeadInMessage(inputPath, outputPath):
             print('Detecting sample rate and channels failed -> Skipping adjustment')
             tempLeadInFileAdjusted = tempLeadInFile
         else:
-            print('Adjust sample rate to {} and channels to {}'.format(detectionInfo['sampleRate'], detectionInfo['channels']))
+            print(('Adjust sample rate to {} and channels to {}'.format(detectionInfo['sampleRate'], detectionInfo['channels'])))
             subprocess.call([ 'ffmpeg', '-i', tempLeadInFile, '-vn', '-ar', detectionInfo['sampleRate'], '-ac', detectionInfo['channels'], tempLeadInFileAdjusted ])
 
         print('Concat')
@@ -103,7 +103,7 @@ def addLeadInMessage(inputPath, outputPath):
 def detectAudioData(mp3File):
     try:
         output = subprocess.check_output([ 'ffmpeg', '-i', mp3File, '-hide_banner' ], stderr=subprocess.STDOUT)
-    except Exception, e:
+    except Exception as e:
         output = str(e.output)
 
     match = re.match('.*Stream #\\d+:\\d+: Audio: mp3, (\\d+) Hz, (mono|stereo), .*', output, re.S)
