@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # Creates the audio messages needed by TonUINO.
 
@@ -26,12 +26,12 @@ if __name__ == '__main__':
 
     audioMessagesFile = '{}/audio_messages_{}.txt'.format(args.input, args.lang)
     if not os.path.isfile(audioMessagesFile):
-        print('Input file does not exist: ' + os.path.abspath(audioMessagesFile))
+        print(('Input file does not exist: ' + os.path.abspath(audioMessagesFile)))
         exit(1)
 
     targetDir = args.output
     if os.path.isdir(targetDir):
-        print("Directory `" + targetDir + "` already exists.")
+        print(("Directory `" + targetDir + "` already exists."))
     else:
         os.mkdir(targetDir)
         os.mkdir(targetDir + '/advert')

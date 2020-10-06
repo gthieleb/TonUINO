@@ -1,9 +1,9 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # Converts text into spoken language saved to an mp3 file.
 
 
-import argparse, base64, json, os, subprocess, sys, urllib
+import argparse, base64, json, os, subprocess, sys, urllib.request, urllib.parse, urllib.error
 
 
 class PatchedArgumentParser(argparse.ArgumentParser):
@@ -56,7 +56,7 @@ def textToSpeechUsingArgs(text, targetFile, args):
 
 
 def textToSpeech(text, targetFile, lang='de', useAmazon=False, useGoogleKey=None):
-    print('\nGenerating: ' + targetFile + ' - ' + text)
+    print(('\nGenerating: ' + targetFile + ' - ' + text))
     if useAmazon:
         response = subprocess.check_output(['aws', 'polly', 'synthesize-speech', '--output-format', 'mp3',
             '--voice-id', amazonVoiceByLang[lang], '--text-type', 'ssml',
@@ -99,7 +99,7 @@ def postJson(url, postBody, headers = None):
 
 
 def postForm(url, formData):
-    response = subprocess.check_output(['curl', '-H', 'Content-Type: application/x-www-form-urlencoded; charset=utf-8', '--data', urllib.urlencode(formData), url])
+    response = subprocess.check_output(['curl', '-H', 'Content-Type: application/x-www-form-urlencoded; charset=utf-8', '--data', urllib.parse.urlencode(formData), url])
     return json.loads(response)
 
 
@@ -120,7 +120,7 @@ if __name__ == '__main__':
     checkArgs(argparser, args)
 
     if os.path.exists(args.output):
-        print('ERROR: Output file alread exists: ' + os.path.abspath(args.output))
+        print(('ERROR: Output file alread exists: ' + os.path.abspath(args.output)))
         sys.exit(1)
 
 
