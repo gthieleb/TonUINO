@@ -22,6 +22,7 @@ argparser.add_argument('--file-regex', type=str, default=None, help="The regular
 argparser.add_argument('--title-pattern', type=str, default=None, help="The pattern to use as track title. May contain groups of `--file-regex`, e.g. '\\1'")
 argparser.add_argument('--add-numbering', action='store_true', help='Whether to add a three-digit number to the mp3 files (suitable for DFPlayer Mini)')
 argparser.add_argument('--dry-run', action='store_true', help='Dry run: Only prints what the script would do, without actually creating files')
+argparser.add_argument('--use-tags', action='store_true', help='Use tags: Use mp3.tags instead of extracting the filename. (Requires eyed3)')
 args = argparser.parse_args()
 
 text_to_speech.checkArgs(argparser, args)
@@ -73,7 +74,12 @@ def addLeadInMessage(inputPath, outputPath):
         print(('Skipping {} (file already exists)'.format(os.path.abspath(outputPath))))
         return
 
-    text = re.sub(fileRegex, titlePattern, inputFileName).replace('_', ' ').strip()
+    if args.use_tags:
+        import eyed3
+        audiofile = eyed3.load(inputPath)
+        text = audiofile.tag.title
+    else:
+        text = re.sub(fileRegex, titlePattern, inputFileName).replace('_', ' ').strip()
     print(('Adding lead-in "{}" to {}'.format(text, os.path.abspath(outputPath))))
 
     if not args.dry_run:
